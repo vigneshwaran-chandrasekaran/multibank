@@ -167,13 +167,39 @@ const SkeletonRow = styled.div`
   border-bottom: 1px solid var(--border);
 `;
 
+const shimmer = keyframes`
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+`;
+
 const SkeletonLine = styled.div<{ w?: string }>`
   height: 10px;
-  background: var(--border);
   border-radius: 4px;
   width: ${(p) => p.w || "60%"};
   margin-bottom: 6px;
-  opacity: 0.5;
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--border) 75%
+  );
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.4s infinite linear;
+`;
+
+const ErrorState = styled.div`
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+
+  span {
+    color: var(--red);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
 `;
 
 function TickerSkeleton() {
@@ -198,7 +224,7 @@ export default function TickerSidebar({ onSelect }: Props) {
   const { tickers, selectedSymbol, setTickers, isConnected } = useTickerStore();
 
   // Seed tickers from REST on mount (WebSocket snapshots will overwrite)
-  const { data: fetchedTickers, isLoading } = useQuery({
+  const { data: fetchedTickers, isLoading, isError } = useQuery({
     queryKey: ["tickers"],
     queryFn: tickersApi.getAll,
     refetchInterval: 30000,
@@ -224,6 +250,11 @@ export default function TickerSidebar({ onSelect }: Props) {
       <TickerList>
         {isLoading && tickerList.length === 0 ? (
           <TickerSkeleton />
+        ) : isError && tickerList.length === 0 ? (
+          <ErrorState>
+            <span>Failed to load tickers</span>
+            Waiting for WebSocket connection…
+          </ErrorState>
         ) : (
           tickerList.map((ticker) => {
             const isUp = ticker.changePercent >= 0;
