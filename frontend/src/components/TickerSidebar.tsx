@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useTickerStore } from "../store/tickerStore";
 import { tickersApi } from "../api/endpoints";
@@ -197,16 +198,19 @@ export default function TickerSidebar({ onSelect }: Props) {
   const { tickers, selectedSymbol, setTickers, isConnected } = useTickerStore();
 
   // Seed tickers from REST on mount (WebSocket snapshots will overwrite)
-  const { isLoading } = useQuery({
+  const { data: fetchedTickers, isLoading } = useQuery({
     queryKey: ["tickers"],
     queryFn: tickersApi.getAll,
     refetchInterval: 30000,
     staleTime: 5000,
-    select: (data) => {
-      setTickers(data);
-      return data;
-    },
   });
+
+  // Side-effect: sync REST data into Zustand store
+  useEffect(() => {
+    if (fetchedTickers) {
+      setTickers(fetchedTickers);
+    }
+  }, [fetchedTickers, setTickers]);
 
   const tickerList = Object.values(tickers);
 
