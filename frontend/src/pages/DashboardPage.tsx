@@ -3,6 +3,7 @@ import Navbar from "../components/layout/Navbar";
 import TickerSidebar from "../components/TickerSidebar";
 import PriceChart from "../components/PriceChart";
 import AlertPanel from "../components/AlertPanel";
+import { ChartErrorBoundary } from "../components/common/ChartErrorBoundary";
 import { useTickerStore } from "../store/tickerStore";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { useAlerts } from "../hooks/useAlerts";
@@ -46,7 +47,9 @@ export default function DashboardPage() {
       <Body>
         <TickerSidebar onSelect={setSelectedSymbol} />
         <Main>
-          <PriceChart />
+          <ChartErrorBoundary>
+            <PriceChart />
+          </ChartErrorBoundary>
         </Main>
         <AlertPanel />
       </Body>
