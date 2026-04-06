@@ -249,7 +249,11 @@ export default function LoginPage() {
           </SubmitButton>
         </Form>
 
-        <Hint>Demo: use any email + password to sign in</Hint>
+        <Hint>
+          Demo credentials<br />
+          Email: <strong style={{color: 'var(--text-secondary)'}}>demo@example.com</strong><br />
+          Password: <strong style={{color: 'var(--text-secondary)'}}>demo1234</strong>
+        </Hint>
       </Card>
     </Wrapper>
   );

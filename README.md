@@ -4,6 +4,18 @@ A full-stack real-time cryptocurrency and stock trading dashboard built with Rea
 
 ---
 
+## 🚀 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | https://multibank-1.onrender.com |
+| **Backend API** | https://multibank-tb8j.onrender.com |
+
+**Login credentials:** use any email and password — auth is mocked.
+> Example: `demo@example.com` / `demo1234`
+
+---
+
 ## Overview
 
 TradeDash streams live simulated price ticks for **AAPL, TSLA, BTC-USD, ETH-USD, and GOOGL** via WebSocket, renders interactive charts with React Query-cached historical data, and lets you set price-threshold alerts with toast notifications.
@@ -25,7 +37,7 @@ TradeDash streams live simulated price ticks for **AAPL, TSLA, BTC-USD, ETH-USD,
 **Frontend:** React 19 · TypeScript · Vite · styled-components · Recharts · Zustand · React Query · React Router  
 **Backend:** Node.js · Express · TypeScript · `ws` (WebSocket)  
 **Infra:** Docker · docker-compose  
-**Deployment:** Vercel (frontend) · Railway (backend)  
+**Deployment:** Render (frontend static site + backend web service)  
 **Tests:** Jest + Supertest (backend) · Vitest + Testing Library (frontend)
 
 ---
@@ -57,7 +69,7 @@ npm install
 npm run dev          # starts on http://localhost:5173
 ```
 
-Open [http://localhost:5173](http://localhost:5173) — log in with **any** email and password.
+Open [http://localhost:5173](http://localhost:5173) — log in with **any** email and password (e.g. `demo@example.com` / `demo1234`).
 
 ### 2. Run with Docker
 
@@ -137,22 +149,30 @@ multibank/
 
 ## Deployment
 
-### Backend → Railway
+Both services are deployed on [Render](https://render.com).
 
-1. Push to GitHub
-2. New project on [railway.app](https://railway.app), connect the repo
-3. Set root directory to `/backend`
-4. Add environment variable `JWT_SECRET=<strong-secret>` and `CORS_ORIGIN=https://your-vercel-domain.vercel.app`
-5. Railway auto-detects the `Dockerfile` and deploys
+### Backend → Render Web Service
 
-### Frontend → Vercel
+1. New **Web Service** on Render, connect the repo
+2. Set **Root Directory** to `backend`
+3. Select **Docker** as the environment
+4. Add environment variables:
+   - `NODE_ENV=production`
+   - `PORT=4000`
+   - `JWT_SECRET=<strong-secret>`
+   - `CORS_ORIGIN=https://multibank-1.onrender.com`
+5. Deploy
 
-1. New project on [vercel.com](https://vercel.com), connect the repo
+### Frontend → Render Static Site
+
+1. New **Static Site** on Render, connect the repo
 2. Set **Root Directory** to `frontend`
-3. Add environment variables:
-   - `VITE_API_URL=https://your-backend.railway.app`
-   - `VITE_WS_URL=wss://your-backend.railway.app`
-4. Deploy — Vercel auto-runs `npm run build`, serves `dist/`, and `vercel.json` handles SPA routing
+3. Set **Build Command** to `npm install && npm run build`
+4. Set **Publish Directory** to `dist`
+5. Add environment variables:
+   - `VITE_API_URL=https://multibank-tb8j.onrender.com`
+   - `VITE_WS_URL=wss://multibank-tb8j.onrender.com`
+6. Deploy
 
 ---
 
