@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { authApi } from "../api/endpoints";
 import { useAuthStore } from "../store/authStore";
 
 const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 `;
 
@@ -15,6 +16,21 @@ const Wrapper = styled.div`
   justify-content: center;
   background: var(--bg-primary);
   padding: 1rem;
+  position: relative;
+  overflow: hidden;
+
+  /* subtle radial glow behind card */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse at center, rgba(200, 168, 75, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
 `;
 
 const Card = styled.div`
@@ -25,28 +41,60 @@ const Card = styled.div`
   border-radius: var(--radius);
   padding: 2.5rem 2rem;
   animation: ${fadeIn} 0.3s ease;
+  position: relative;
+  z-index: 1;
 `;
 
 const Logo = styled.div`
   text-align: center;
   margin-bottom: 2rem;
+`;
 
-  h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.5px;
-  }
-  p {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
+const LogoMark = styled.div`
+  width: 44px;
+  height: 44px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0b0c0f;
+  margin: 0 auto 0.75rem;
+`;
+
+const BrandName = styled.h1`
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+
+  span {
+    color: var(--accent);
   }
 `;
 
-const Icon = styled.div`
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+const BrandSub = styled.p`
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  letter-spacing: 0.3px;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+`;
+
+const SectionTitle = styled.p`
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 1.25rem;
 `;
 
 const Form = styled.form`
@@ -62,11 +110,10 @@ const Field = styled.div`
 `;
 
 const Label = styled.label`
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 `;
 
 const Input = styled.input<{ $hasError?: boolean }>`
@@ -75,13 +122,14 @@ const Input = styled.input<{ $hasError?: boolean }>`
   border: 1px solid ${(p) => (p.$hasError ? "var(--red)" : "var(--border)")};
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   width: 100%;
   transition: border-color var(--transition);
 
   &:focus {
     outline: none;
     border-color: ${(p) => (p.$hasError ? "var(--red)" : "var(--accent)")};
+    box-shadow: 0 0 0 2px ${(p) => (p.$hasError ? "rgba(246,70,93,0.12)" : "rgba(200,168,75,0.12)")};
   }
 
   &::placeholder {
@@ -92,17 +140,18 @@ const Input = styled.input<{ $hasError?: boolean }>`
 const SubmitButton = styled.button<{ $loading?: boolean }>`
   padding: 0.75rem;
   background: var(--accent);
-  color: #fff;
+  color: #0b0c0f;
   border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.9rem;
   margin-top: 0.5rem;
-  transition: opacity var(--transition), transform var(--transition);
+  letter-spacing: 0.3px;
+  transition: opacity var(--transition), transform var(--transition), background var(--transition);
   opacity: ${(p) => (p.$loading ? 0.7 : 1)};
   pointer-events: ${(p) => (p.$loading ? "none" : "auto")};
 
   &:hover {
-    opacity: 0.9;
+    background: var(--accent-hover);
   }
 
   &:active {
@@ -113,17 +162,18 @@ const SubmitButton = styled.button<{ $loading?: boolean }>`
 const ErrorBanner = styled.div`
   padding: 0.6rem 0.85rem;
   background: var(--red-dim);
-  border: 1px solid var(--red);
+  border: 1px solid rgba(246, 70, 93, 0.35);
   border-radius: var(--radius-sm);
   color: var(--red);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 `;
 
 const Hint = styled.p`
   text-align: center;
   color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-top: 1rem;
+  font-size: 0.74rem;
+  margin-top: 1.25rem;
+  line-height: 1.5;
 `;
 
 export default function LoginPage() {
@@ -132,6 +182,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const setAuth = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,6 +195,7 @@ export default function LoginPage() {
     try {
       const res = await authApi.login({ email: email.trim(), password });
       setAuth(res.token, res.user);
+      navigate("/", { replace: true });
     } catch {
       setError("Login failed. Please try again.");
     } finally {
@@ -155,16 +207,19 @@ export default function LoginPage() {
     <Wrapper>
       <Card>
         <Logo>
-          <Icon>📈</Icon>
-          <h1>TradeDash</h1>
-          <p>Real-time crypto &amp; stock dashboard</p>
+          <LogoMark>MB</LogoMark>
+          <BrandName>Multi<span>Bank</span></BrandName>
+          <BrandSub>TradeFi Platform</BrandSub>
         </Logo>
+
+        <Divider />
+        <SectionTitle>Sign in to your account</SectionTitle>
 
         <Form onSubmit={handleSubmit} noValidate>
           {error && <ErrorBanner role="alert">{error}</ErrorBanner>}
 
           <Field>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email address</Label>
             <Input
               id="email"
               type="email"
@@ -190,11 +245,11 @@ export default function LoginPage() {
           </Field>
 
           <SubmitButton type="submit" $loading={loading}>
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Authenticating…" : "Sign In"}
           </SubmitButton>
         </Form>
 
-        <Hint>Use any email + password to sign in (mocked auth)</Hint>
+        <Hint>Demo: use any email + password to sign in</Hint>
       </Card>
     </Wrapper>
   );

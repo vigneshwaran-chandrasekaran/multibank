@@ -24,6 +24,11 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "trading-auth",
       partialize: (state) => ({ token: state.token, user: state.user }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.token && state.user) {
+          state.isAuthenticated = true;
+        }
+      },
     }
   )
 );
