@@ -1,6 +1,8 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
   *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -8,24 +10,33 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   :root {
-    --bg-primary: #0d1117;
-    --bg-secondary: #161b22;
-    --bg-card: #1c2128;
-    --bg-hover: #21262d;
-    --border: #30363d;
-    --text-primary: #e6edf3;
-    --text-secondary: #8b949e;
-    --text-muted: #6e7681;
-    --green: #3fb950;
-    --green-dim: #1a3a24;
-    --red: #f85149;
-    --red-dim: #3a1a1a;
-    --accent: #58a6ff;
-    --accent-dim: #1a2a3a;
-    --yellow: #d29922;
-    --radius: 8px;
+    /* MultibankGroup tradfi dark theme */
+    --bg-primary:   #0b0c0f;
+    --bg-secondary: #111318;
+    --bg-card:      #181a21;
+    --bg-hover:     #1f2130;
+    --border:       #252830;
+
+    --text-primary:   #f0f1f5;
+    --text-secondary: #9ca3b2;
+    --text-muted:     #5c6270;
+
+    /* MB brand gold */
+    --accent:     #c8a84b;
+    --accent-dim: #2a2214;
+    --accent-hover: #d9bb6a;
+
+    /* Financial green / red */
+    --green:     #0ecb81;
+    --green-dim: #0a2a1c;
+    --red:       #f6465d;
+    --red-dim:   #2a0e14;
+
+    --yellow: #f0b90b;
+
+    --radius:    6px;
     --radius-sm: 4px;
-    --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    --font-mono: "JetBrains Mono", "Fira Code", monospace;
     --transition: 150ms ease;
   }
 
@@ -36,8 +47,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     background: var(--bg-primary);
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     line-height: 1.5;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -61,8 +71,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
@@ -72,5 +82,9 @@ export const GlobalStyle = createGlobalStyle`
   ::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
   }
 `;
