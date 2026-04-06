@@ -1,0 +1,7 @@
+[build]
+  builder = "dockerfile"
+  dockerfilePath = "Dockerfile"
+
+[[services]]
+  type = "web"
+  name = "tradedash-frontend"
