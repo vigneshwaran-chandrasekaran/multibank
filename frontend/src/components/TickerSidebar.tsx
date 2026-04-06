@@ -55,6 +55,11 @@ const SidebarHeader = styled.div`
   }
 `;
 
+const pulse = keyframes`
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+`;
+
 const ConnectionDot = styled.span<{ $connected: boolean }>`
   width: 7px;
   height: 7px;
@@ -62,6 +67,10 @@ const ConnectionDot = styled.span<{ $connected: boolean }>`
   background: ${(p) => (p.$connected ? "var(--green)" : "var(--text-muted)")};
   display: inline-block;
   flex-shrink: 0;
+  animation: ${(p) =>
+    p.$connected
+      ? css`${pulse} 2s ease-in-out infinite`
+      : "none"};
 `;
 
 const TickerList = styled.ul`
