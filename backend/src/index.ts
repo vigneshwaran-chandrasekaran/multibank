@@ -12,12 +12,18 @@ const app = express();
 const PORT = parseInt(process.env.PORT || "4000", 10);
 
 // Middleware
-const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",");
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim());
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. curl, Postman, same-origin)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (curl, Postman, same-origin)
+      if (!origin) return callback(null, true);
+      // Allow any onrender.com subdomain in case frontend URL changes
+      const isRender = origin.endsWith(".onrender.com");
+      if (isRender || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
