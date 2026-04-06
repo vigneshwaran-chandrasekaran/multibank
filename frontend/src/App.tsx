@@ -5,6 +5,8 @@ import { GlobalStyle } from "./components/common/GlobalStyle";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import MarketsPage from "./pages/MarketsPage";
+import PortfolioPage from "./pages/PortfolioPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +30,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/markets"
+            element={
+              <ProtectedRoute>
+                <MarketsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/portfolio"
+            element={
+              <ProtectedRoute>
+                <PortfolioPage />
               </ProtectedRoute>
             }
           />

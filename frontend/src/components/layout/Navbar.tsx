@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { authApi } from "../../api/endpoints";
 
@@ -154,6 +155,8 @@ const LogoutBtn = styled.button`
 
 export default function Navbar() {
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -169,7 +172,7 @@ export default function Navbar() {
 
   return (
     <Nav>
-      <Brand>
+      <Brand style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
         <LogoMark>MB</LogoMark>
         <BrandText>
           <span>MultiBank</span>
@@ -178,9 +181,9 @@ export default function Navbar() {
       </Brand>
 
       <NavLinks>
-        <NavLink $active>Dashboard</NavLink>
-        <NavLink>Markets</NavLink>
-        <NavLink>Portfolio</NavLink>
+        <NavLink $active={location.pathname === "/"} onClick={() => navigate("/")}>Dashboard</NavLink>
+        <NavLink $active={location.pathname === "/markets"} onClick={() => navigate("/markets")}>Markets</NavLink>
+        <NavLink $active={location.pathname === "/portfolio"} onClick={() => navigate("/portfolio")}>Portfolio</NavLink>
       </NavLinks>
 
       <Right>
